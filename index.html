@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House of J&S Computer Training Center</title>
+<style>
+:root{--gold:#c99a22;--gold2:#f1d27a;--dark:#171717;--cream:#fffaf0;--green:#16834b;--red:#c0392b}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#fff,#fff8e8);color:#222}
+input,textarea,select,button{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text}
+
+#errBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:100000;background:#b00020;color:#fff;padding:10px 16px;font-size:13px;font-family:monospace;white-space:pre-wrap}
+
+/* LOGIN */
+#loginScreen{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:linear-gradient(135deg,#111,#2b2414);overflow-y:auto;padding:20px}
+.loginBox{width:100%;max-width:440px;background:#fff;border-radius:22px;padding:30px 26px;box-shadow:0 20px 60px #000a;border:2px solid #d7af3b;text-align:center;margin:40px auto}
+.loginBox img{width:88px;height:88px;object-fit:contain;background:#fff;border-radius:16px;padding:6px;border:1px solid #ead49a}
+.loginBox h1{margin:12px 0 4px;font-size:20px;color:#8c680d;line-height:1.35}
+.loginBox p.sub{margin:0 0 18px;font-size:13px;color:#777}
+.loginBox label{display:block;text-align:left;font-weight:bold;font-size:14px;margin:14px 0 6px;color:#5c4a17}
+.loginBox .field{position:relative}
+.loginBox input{width:100%;padding:12px 44px 12px 12px;border:1px solid #d6c38d;border-radius:10px;font-size:15px;background:#fffdf7;outline:none}
+.loginBox input:focus{border-color:var(--gold);box-shadow:0 0 0 3px #c99a2233}
+.toggleEye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:0;cursor:pointer;font-size:16px;padding:6px}
+#loginBtn{width:100%;margin-top:22px;padding:14px;border:0;border-radius:12px;background:linear-gradient(90deg,#b98917,#e3bd4d);color:#fff;font-size:17px;font-weight:bold;cursor:pointer;letter-spacing:.5px}
+#loginBtn:hover{filter:brightness(1.07)}
+#loginBtn:active{transform:scale(.98)}
+#loginErr{display:none;margin-top:14px;padding:10px;border-radius:9px;background:#fff0ee;color:#9d2f24;font-size:14px;font-weight:bold;text-align:left;border-left:5px solid #c0392b}
+#loginOk{display:none;margin-top:14px;padding:10px;border-radius:9px;background:#e9f8ef;color:#12683d;font-size:14px;font-weight:bold;border-left:5px solid #16834b}
+.loginNote{margin-top:18px;font-size:12px;color:#999;line-height:1.6}
+.pwdHint{font-size:12px;color:#a08a4a;margin-top:6px;text-align:left}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#111,#2b2414);color:#fff;padding:20px 18px;position:sticky;top:0;z-index:10;box-shadow:0 5px 20px #0003}
+.brand{max-width:1200px;margin:auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.brand img{width:66px;height:66px;object-fit:contain;background:#fff;border-radius:14px;padding:6px}
+.brand h1{margin:0;color:#f3cf65;font-size:clamp(18px,3.2vw,30px)}
+.brand p{margin:5px 0 0;color:#eee;font-size:13px}
+.headRight{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.timerBox{background:#000;border:2px solid #d7af3b;border-radius:12px;padding:8px 14px;text-align:center;min-width:130px}
+.timerBox .lbl{font-size:10px;color:#c9b477;letter-spacing:1px}
+.timerBox .t{font-size:22px;font-weight:bold;color:#f2cf63;font-family:monospace}
+.timerBox.warn{border-color:#e74c3c;animation:pulse .8s infinite}
+.timerBox.warn .t{color:#ff6b5b}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 #e74c3c88}50%{box-shadow:0 0 0 10px #e74c3c00}}
+.userChip{background:#2b2414;border:1px solid #6b5a2a;border-radius:999px;padding:7px 14px;font-size:13px;color:#f3cf65}
+.violChip{background:#7a1a10;border:1px solid #e74c3c;border-radius:999px;padding:7px 14px;font-size:13px;color:#ffd7d2}
+
+/* LAYOUT */
+.wrap{max-width:1200px;margin:24px auto;padding:0 16px}
+.hero{background:#fff;border:1px solid #ead49a;border-radius:22px;padding:25px;box-shadow:0 8px 30px #8d6a1620;margin-bottom:22px}
+.hero h2{margin:0 0 8px;color:#9b7310}
+.hero p{line-height:1.6}
+.marksBox{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0 4px}
+.mark{background:#fff7dd;border:1px solid #ead49a;border-radius:14px;padding:12px 18px;text-align:center;min-width:120px}
+.mark .n{font-size:24px;font-weight:bold;color:#8c680d;font-family:monospace}
+.mark .k{font-size:11px;color:#8a7b4d;letter-spacing:.5px;text-transform:uppercase}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.btn{border:0;border-radius:10px;padding:12px 18px;font-weight:bold;cursor:pointer;font-size:14px}
+.primary{background:var(--gold);color:#fff}
+.secondary{background:#222;color:#fff}
+.reset{background:#eee}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.section{margin:28px 0}
+.section-title{background:linear-gradient(90deg,#b98917,#f1d27a);color:#fff;padding:13px 18px;border-radius:13px;font-size:20px;font-weight:bold}
+.lesson{background:#fff;border:1px solid #ead49a;border-radius:16px;margin:15px 0;padding:18px;box-shadow:0 5px 18px #8d6a1612}
+.lesson h3{margin:0 0 14px;color:#8c680d;font-size:17px}
+.q{padding:15px 0;border-top:1px solid #eee}
+.q:first-child{border-top:0}
+.qnum{font-weight:bold;color:#8b670e}
+.prompt{margin:7px 0 10px;line-height:1.55}
+.opts label{display:block;padding:8px 10px;border-radius:8px;margin:4px 0;cursor:pointer;border:1px solid transparent}
+.opts label:hover{background:#fff7dd;border-color:#ead49a}
+input[type=text],textarea,select{width:100%;padding:10px;border:1px solid #d6c38d;border-radius:8px;font-size:15px;background:#fffdf7;font-family:inherit;outline:none}
+textarea{min-height:80px;resize:vertical}
+input[type=text]:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px #c99a2222}
+.feedback{display:none;margin-top:8px;padding:10px;border-radius:8px;font-size:14px;line-height:1.5}
+.correct{background:#e9f8ef;color:#12683d;border-left:5px solid #16834b}
+.wrong{background:#fff0ee;color:#9d2f24;border-left:5px solid #c0392b}
+.partial{background:#fff8e1;color:#8a6100;border-left:5px solid #e0a800}
+.small{font-size:13px;color:#666}
+footer{text-align:center;padding:35px 15px;color:#777}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#fff4ce;color:#795700;font-size:12px;font-weight:bold;margin:3px}
+.progress{height:10px;background:#eee;border-radius:20px;overflow:hidden;margin-top:10px}
+.bar{height:100%;width:0;background:linear-gradient(90deg,#b98917,#f1d27a);transition:.3s}
+
+/* RESULT */
+.result{display:none;background:#171717;color:#fff;border:2px solid #d7af3b;border-radius:16px;padding:22px;margin:18px 0;box-shadow:0 10px 30px #0005}
+.scoreLine{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid #333}
+.score{font-size:36px;color:#f2cf63;font-weight:bold;font-family:monospace}
+.grade{padding:6px 16px;border-radius:999px;background:#2b2414;border:1px solid #d7af3b;color:#f2cf63;font-size:14px;font-weight:bold}
+.summaryGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}
+.sumCell{background:#0d0d0d;border:1px solid #333;border-radius:10px;padding:12px}
+.sumCell .k{font-size:11px;color:#c9b477;text-transform:uppercase;letter-spacing:.5px}
+.sumCell .v{font-size:18px;color:#f2cf63;font-weight:bold;font-family:monospace;margin-top:4px}
+.msgBox{background:#0d0d0d;border-left:5px solid #d7af3b;border-radius:8px;padding:12px 14px;margin-top:12px;font-size:14px;line-height:1.6}
+.unitBlock{margin:18px 0;background:#0d0d0d;border-radius:12px;padding:14px;border-left:4px solid #d7af3b}
+.unitBlock h3{margin:0 0 6px;color:#f2cf63;font-size:17px}
+.unitStats{font-size:12px;color:#bbb;margin-bottom:12px}
+.lessonBlock{margin:12px 0;padding:10px;background:#161616;border-radius:10px}
+.lessonBlock h4{margin:0 0 8px;color:#e3bd4d;font-size:14px}
+.lessonStats{font-size:12px;color:#aaa;margin-bottom:8px}
+.resTable{width:100%;border-collapse:collapse;font-size:12.5px}
+.resTable th,.resTable td{padding:7px 8px;border-bottom:1px solid #2a2a2a;text-align:left;vertical-align:top}
+.resTable th{color:#c9b477;background:#0a0a0a;font-size:11px;text-transform:uppercase;letter-spacing:.3px}
+.resTable tr:last-child td{border-bottom:0}
+.resTable .qText{max-width:280px;color:#ddd}
+.resTable .uAns{max-width:180px;color:#ff9a8f;font-style:italic;word-break:break-word}
+.resTable .cAns{max-width:180px;color:#7ee0a0;word-break:break-word}
+.resTable .statusOk{color:#4ade80;font-weight:bold;white-space:nowrap}
+.resTable .statusNo{color:#ff6b5b;font-weight:bold;white-space:nowrap}
+.resTable .statusPart{color:#e0a800;font-weight:bold;white-space:nowrap}
+.resTable tr.rowNo{background:#2a0d0d}
+.resTable tr.rowPart{background:#2a2200}
+.tableWrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* FLOATING SUBMIT AT BOTTOM */
+.bottomSubmit{text-align:center;margin:30px 0 10px;padding:22px;background:#fff;border:2px dashed #d7af3b;border-radius:16px}
+.bottomSubmit .btn{font-size:16px;padding:16px 36px}
+.bottomSubmit p{margin:10px 0 0;font-size:13px;color:#8a7b4d}
+
+/* WARN OVERLAY */
+#warnOverlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;background:#7a0000ee;color:#fff;align-items:center;justify-content:center;text-align:center;padding:20px}
+#warnOverlay .box{max-width:520px;background:#1a0000;border:3px solid #ff4d3d;border-radius:20px;padding:32px 26px;box-shadow:0 0 60px #ff0000aa}
+#warnOverlay h2{margin:0 0 10px;color:#ff6b5b;font-size:26px}
+#warnOverlay p{line-height:1.7;font-size:15px}
+#warnOverlay button{margin-top:20px;padding:14px 26px;border:0;border-radius:12px;background:#ff4d3d;color:#fff;font-weight:bold;font-size:16px;cursor:pointer}
+
+@media(max-width:650px){
+  header{position:static}.brand img{width:54px;height:54px}.hero,.lesson{padding:14px}.headRight{margin-left:0;width:100%}
+  .resTable .qText{max-width:160px}.resTable .uAns,.resTable .cAns{max-width:110px}
+}
+</style>
+</head>
+<body>
+
+<div id="errBanner"></div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="loginBox">
+    <img src="logo1.png" alt="Logo" onerror="this.style.display='none'">
+    <h1>House of J&amp;S<br>Computer Training Center</h1>
+    <p class="sub">Inspire Computing Pearson Year 9 &bull; Online Exam</p>
+
+    <label for="stuName">Student Name (ကျောင်းသား အမည်)</label>
+    <div class="field">
+      <input type="text" id="stuName" placeholder="Enter your full name" autocomplete="off" spellcheck="false">
+    </div>
+
+    <label for="stuPass">Password (လျှို့ဝှက်နံပါတ်)</label>
+    <div class="field">
+      <input type="password" id="stuPass" placeholder="Enter password" autocomplete="off" spellcheck="false">
+      <button type="button" class="toggleEye" id="toggleEye" title="Show/Hide">&#128065;</button>
+    </div>
+    <div class="pwdHint">Default password: <b>HJS2026</b></div>
+
+    <button type="button" id="loginBtn" onclick="doLogin()">&#128274; Login &amp; Start Exam</button>
+
+    <div id="loginErr"></div>
+    <div id="loginOk"></div>
+
+    <div class="loginNote">
+      &#9201; Time: 60 minutes &bull; &#128203; Full Screen auto-start<br>
+      &#9888; Leaving the exam window triggers an alarm
+    </div>
+  </div>
+</div>
+
+<!-- EXAM APP -->
+<div id="examApp" style="display:none">
+
+<header>
+  <div class="brand">
+    <img src="logo1.png" alt="Logo" onerror="this.style.display='none'">
+    <div>
+      <h1>House of J&amp;S Computer Training Center</h1>
+      <p>Inspire Computing Pearson Year 9 &bull; Online Question &amp; AutoCheck</p>
+    </div>
+    <div class="headRight">
+      <div class="userChip" id="userChip">&#128100; &mdash;</div>
+      <div class="violChip" id="violChip">&#9888; Violations: 0</div>
+      <div class="timerBox" id="timerBox">
+        <div class="lbl">TIME LEFT</div>
+        <div class="t" id="timer">60:00</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<section class="hero">
+  <span class="badge">Unit 3 &bull; Lessons 1, 2, 5, 6</span>
+  <span class="badge">Unit 4 &bull; Lessons 1, 2</span>
+  <span class="badge">Unit 6 &bull; Lessons 1, 2, 5, 6</span>
+  <h2>Year 9 Computing Online Exam</h2>
+  <p>Answer the questions below, then press <b>Submit &amp; AutoCheck</b>. The system checks your answers automatically, shows your score, and marks each answer.</p>
+
+  <div class="marksBox">
+    <div class="mark"><div class="n" id="mTotal">&mdash;</div><div class="k">Total Marks</div></div>
+    <div class="mark"><div class="n">60:00</div><div class="k">Time Allowed</div></div>
+    <div class="mark"><div class="n" id="mAnswered">0</div><div class="k">Answered</div></div>
+    <div class="mark"><div class="n">1</div><div class="k">Mark / Question</div></div>
+  </div>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="controls">
+    <button class="btn primary" id="submitBtn" onclick="submitExam()">&#10003; Submit &amp; AutoCheck</button>
+    <button class="btn secondary" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})">&#8595; Finish</button>
+    <button class="btn reset" onclick="resetExam()">&#8635; Reset</button>
+  </div>
+</section>
+
+<div id="result" class="result">
+  <div class="scoreLine">
+    <span class="score" id="score"></span>
+    <span class="grade" id="grade"></span>
+  </div>
+  <div class="summaryGrid" id="summaryGrid"></div>
+  <div class="msgBox" id="msgBox"></div>
+  <div id="unitBreakdown"></div>
+</div>
+
+<form id="examForm"></form>
+
+<div class="bottomSubmit">
+  <button class="btn primary" id="submitBtn2" onclick="submitExam()">&#10003; Submit &amp; AutoCheck (Finish Exam)</button>
+  <p>Please answer all questions before pressing Submit.</p>
+</div>
+</main>
+
+<footer>House of J&amp;S Computer Training Center &bull; Year 9 Computing Practice</footer>
+</div>
+
+<!-- WARNING -->
+<div id="warnOverlay">
+  <div class="box">
+    <h2>&#128680; WARNING &#128680;</h2>
+    <p id="warnMsg">Do not leave the exam window.</p>
+    <p id="warnCount" style="color:#ffb3ab;font-weight:bold"></p>
+    <button id="warnBtn">&#8617; Return to Exam (Full Screen)</button>
+  </div>
+</div>
+
+<!-- ============ SCRIPT 1: LOGIN (independent) ============ -->
+<script>
+window.EXAM_PASSWORD = 'HJS2026';
+window.EXAM_MINUTES  = 60;
+window.MAX_VIOLATIONS = 3;
+
+window.showErr = function(msg){
+  var b = document.getElementById('errBanner');
+  if(b){ b.style.display='block'; b.textContent = 'Error: ' + msg; }
+};
+
+window.doLogin = function(){
+  var err = document.getElementById('loginErr');
+  var ok  = document.getElementById('loginOk');
+  err.style.display = 'none';
+  ok.style.display  = 'none';
+
+  var nameEl = document.getElementById('stuName');
+  var passEl = document.getElementById('stuPass');
+  var name = (nameEl.value || '').trim();
+  var pass = (passEl.value || '').trim();
+
+  if(!name){ err.textContent='Please enter your name.'; err.style.display='block'; nameEl.focus(); return false; }
+  if(!pass){ err.textContent='Please enter the password.'; err.style.display='block'; passEl.focus(); return false; }
+  if(pass.toUpperCase() !== String(window.EXAM_PASSWORD).toUpperCase()){
+    err.textContent = 'Incorrect password. Default is HJS2026.';
+    err.style.display = 'block';
+    passEl.value = ''; passEl.focus(); return false;
+  }
+
+  window.studentName = name;
+  var chip = document.getElementById('userChip');
+  if(chip) chip.textContent = 'Student: ' + name;
+
+  ok.textContent = 'Login successful. Starting exam...';
+  ok.style.display = 'block';
+
+  try{ initAudio(); }catch(e){}
+  try{ enterFullscreen(); }catch(e){}
+
+  setTimeout(function(){
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('examApp').style.display = 'block';
+    if(typeof startExam === 'function') startExam();
+  }, 250);
+  return true;
+};
+
+(function(){
+  var passEl = document.getElementById('stuPass');
+  if(passEl){
+    passEl.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.keyCode === 13){ e.preventDefault(); window.doLogin(); }
+    });
+  }
+  var nameEl = document.getElementById('stuName');
+  if(nameEl){
+    nameEl.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.keyCode === 13){ e.preventDefault(); var p=document.getElementById('stuPass'); if(p) p.focus(); }
+    });
+  }
+  var eye = document.getElementById('toggleEye');
+  if(eye){
+    eye.onclick = function(){
+      var p = document.getElementById('stuPass'); if(!p) return;
+      p.type = (p.type === 'password') ? 'text' : 'password';
+    };
+  }
+  var wb = document.getElementById('warnBtn');
+  if(wb){
+    wb.onclick = function(){
+      var ov = document.getElementById('warnOverlay'); if(ov) ov.style.display='none';
+      try{ enterFullscreen(); }catch(e){}
+    };
+  }
+})();
+</script>
+
+<!-- ============ SCRIPT 2: QUESTION BANK ============ -->
+<script>
+var questions = [
+{sec:"UNIT 3 - INPUT, PROCESS, OUTPUT",lesson:"Lesson 1 - The Computer Input and Output System",qs:[
+["What is meant by input in a computer system?","mc","Information or data fed into the computer",["Information or data fed into the computer","Information produced by the computer","Calculations carried out by the CPU","Information stored permanently"]],
+["Which component carries out calculations and processing?","mc","CPU",["Monitor","Keyboard","CPU","Printer"]],
+["Which of the following is an output device?","mc","Monitor",["Keyboard","Mouse","Monitor","Scanner"]],
+["Which of the following is an input device?","mc","Keyboard",["Printer","Speaker","Projector","Keyboard"]],
+["Define the term input.","text","information or data fed into the computer"],
+["Define the term process.","text","calculations or processes carried out by the CPU"],
+["Define the term output.","text","resulting data presented to the user visually or audibly"],
+["Give four examples of input devices.","text","keyboard,mouse,scanner,microphone"],
+["Give four examples of output devices.","text","monitor,printer,speaker,projector"],
+["Explain the three stages: input, process and output.","text","input,process,output"],
+["A user views a 3D model of a video game. Give a suitable input device and output device.","text","input,output"],
+["A user opens a document on a laptop. Give one input device and one output device.","text","input,output"],
+["A student submits a word-processed report on paper. What output device could be used?","text","printer"],
+["Give two devices that can both send and receive data.","text","input,output"]
+]},
+{sec:"UNIT 3 - INPUT, PROCESS, OUTPUT",lesson:"Lesson 2 - Computer Components",qs:[
+["Which component is the brain of the computer?","mc","CPU",["CPU","RAM","Hard drive","Monitor"]],
+["What is the purpose of a hard drive?","text","long-term storage"],
+["What is RAM used for?","text","short-term memory,current data,process"],
+["What is ROM used for?","text","read-only memory,essential system information"],
+["What is the purpose of a motherboard?","text","main circuit board"],
+["What is the purpose of a graphics/video card?","text","connects to a display,monitor,projector"],
+["What is the purpose of connectors or ports?","text","connect external peripherals,input/output devices"],
+["Which component provides short-term memory?","mc","RAM",["ROM","RAM","Hard drive","CPU"]],
+["Which component stores read-only information?","mc","ROM",["RAM","ROM","CPU","Graphics card"]],
+["Which component connects the major internal components together?","mc","Motherboard",["CPU","Motherboard","Hard drive","Power supply"]],
+["What is the purpose of the CPU fan?","text","cool the CPU"],
+["What is the purpose of the power supply?","text","provide power to the computer components"]
+]},
+{sec:"UNIT 3 - INPUT, PROCESS, OUTPUT",lesson:"Lesson 5 - RISC and CISC Processors",qs:[
+["What are RISC and CISC?","mc","Types of computer architecture",["Types of computer architecture","Types of storage devices","Types of network","Types of operating system"]],
+["What does RISC stand for?","text","reduced instruction set computer"],
+["What does CISC stand for?","text","complex instruction set computer"],
+["Which architecture is designed to carry out repeated single instructions?","mc","RISC",["RISC","CISC","LAN","BIOS"]],
+["Give three examples of devices that use RISC architecture.","text","risc"],
+["Give three examples of devices that use CISC architecture.","text","cisc"],
+["Which type requires fast RAM?","mc","RISC",["RISC","CISC"]],
+["Which type uses most power?","mc","CISC",["RISC","CISC"]],
+["Which type requires very little RAM?","mc","RISC",["RISC","CISC"]],
+["Give one difference between RISC and CISC.","text","instruction"]
+]},
+{sec:"UNIT 3 - INPUT, PROCESS, OUTPUT",lesson:"Lesson 6 - BIOS and ROM",qs:[
+["What does BIOS stand for?","mc","Basic Input/Output System",["Basic Input/Output System","Basic Internet Operating System","Binary Input Operating System","Basic Internal Output Software"]],
+["Which modern system is replacing traditional BIOS?","mc","UEFI",["RAM","UEFI","CPU","LAN"]],
+["Which type of memory loses data when power is turned off?","mc","Volatile",["Non-volatile","Volatile","ROM","Firmware"]],
+["Which type of memory keeps data when power is removed?","mc","Non-volatile",["Volatile","Non-volatile","RAM","Cache"]],
+["Name four functions/options that can be found in BIOS.","text","boot order,password,device control,system settings,overclocking"],
+["What is meant by boot order?","text","order in which devices are checked or used for booting"],
+["What is overclocking?","text","running a CPU at a higher speed"],
+["Why can overclocking damage a CPU?","text","too much heat"],
+["What is firmware?","text","software stored in a device that controls or provides functions"],
+["What is the difference between volatile and non-volatile memory?","text","volatile loses data when power is off,non-volatile keeps data"]
+]},
+{sec:"UNIT 4 - COMPUTING FOR ALL?",lesson:"Lesson 1 - Network Types",qs:[
+["What does LAN stand for?","text","local area network"],
+["What does WAN stand for?","text","wide area network"],
+["What does PAN stand for?","text","personal area network"],
+["Which type of network covers a small geographical area?","mc","LAN",["WAN","LAN","Internet","PAN"]],
+["Which type of network covers a large geographical area?","mc","WAN",["WAN","LAN","PAN","Bluetooth"]],
+["A network around one person is called what?","mc","PAN",["LAN","WAN","PAN","MAN"]],
+["A network inside a school is usually what type?","mc","LAN",["LAN","WAN","PAN"]],
+["Bluetooth headphones connected to a phone are an example of what?","mc","PAN",["LAN","WAN","PAN"]],
+["Give two examples of devices that can be connected to a network other than desktop computers.","text","phone,tablet,printer"],
+["Give two examples of devices that could form part of a PAN.","text","phone,headphones"],
+["State one advantage and one disadvantage of a LAN.","text","advantage,disadvantage"],
+["State one advantage and one disadvantage of a WAN.","text","advantage,disadvantage"],
+["State one advantage and one disadvantage of a PAN.","text","advantage,disadvantage"]
+]},
+{sec:"UNIT 4 - COMPUTING FOR ALL?",lesson:"Lesson 2 - Network Layouts",qs:[
+["What is another word for a network layout?","mc","Topology",["Topology","Protocol","Firmware","Metadata"]],
+["What is a point-to-point network?","text","two compatible devices connected to each other"],
+["Describe a bus network.","text","multiple devices connected to a single network cable"],
+["What is the main feature of a ring network?","text","closed loop"],
+["What is the central device in a star network?","mc","Hub",["Server","Hub","CPU","Router"]],
+["Which network layout is commonly used in homes?","mc","Star",["Bus","Ring","Star","Mesh"]],
+["What is the main feature of a mesh network?","text","every device connected to every other device"],
+["What is a hybrid network?","text","multiple network layouts together"],
+["Which network structure is the internet based on?","mc","Mesh",["Bus","Ring","Star","Mesh"]]
+]},
+{sec:"UNIT 6 - WEB AUTHORING",lesson:"Lesson 1 - An Introduction to HTML",qs:[
+["Who developed HTML and the first web browser?","mc","Sir Tim Berners-Lee",["Steve Jobs","Sir Tim Berners-Lee","Bill Gates","Mark Zuckerberg"]],
+["What is HTML used for?","mc","Creating the structure/content of web pages",["Creating the structure/content of web pages","Connecting computers to electricity","Storing files on a hard drive","Creating computer networks"]],
+["What information is normally placed in the head section?","text","title,style,metadata"],
+["What is placed inside the body?","text","all page content seen by the user"],
+["What is the purpose of the title?","text","title at the top of the browser and listed in search engines"],
+["What are HTML tags?","text","HTML commands using angle brackets"],
+["What is an HTML attribute?","text","specific or additional information"],
+["What is a hyperlink?","text","link to another web page"],
+["What is metadata?","text","background information about the site read by search engines"],
+["What is the difference between ordered and unordered lists?","text","ordered numbered,unordered bulleted"]
+]},
+{sec:"UNIT 6 - WEB AUTHORING",lesson:"Lesson 2 - HTML Basics",qs:[
+["What is the purpose of the DOCTYPE declaration?","text","notifies the browser to display the HTML document"],
+["Which tags contain the page metadata?","mc","head",["head","body","p","ul"]],
+["Which tag contains the main page content?","mc","body",["head","body","title","h1"]],
+["Which tag creates the main heading?","mc","h1",["h1","p","br","li"]],
+["Which tag creates a paragraph?","mc","p",["p","h1","ul","li"]],
+["Which tag creates an unordered list?","mc","ul",["ul","ol","li","body"]],
+["Which tag creates an individual list item?","mc","li",["li","ul","p","br"]],
+["What is the purpose of the br tag?","text","line break"],
+["What should the new title be when changing Hats to Bags?","mc","Bags of the World",["Bags of the World","Hats of the World","Bags from around the world","World Bags"]],
+["What should the new h1 heading be?","mc","Bags from around the world",["Bags of the World","Bags from around the world","Hats from around the world","Bags"]],
+["Name the four list items in the Bags example.","text","rucksack,handbag,shoulder bag,picnic box"],
+["What is HTML5?","text","a version of HTML"]
+]},
+{sec:"UNIT 6 - WEB AUTHORING",lesson:"Lesson 5 - WYSIWYG Software",qs:[
+["What does WYSIWYG stand for?","text","what you see is what you get"],
+["Which is not web-design software?","mc","Excel",["WYSIWYG software","Web-based website builder","Excel","HTML editor"]],
+["What is the purpose of a preview function?","text","see how the webpage will look"],
+["Why is compatibility with mobile devices important?","text","modern webpages need to work on mobile devices"],
+["What is WYSIWYG software used for?","text","create websites without writing all html code manually"],
+["Name three common tools or functions in WYSIWYG software.","text","text,images,links,preview"],
+["State one advantage of WYSIWYG software.","text","easier than coding html"],
+["State one disadvantage of WYSIWYG software.","text","long html code,lack of tools or support"],
+["What is one difference between WYSIWYG software and a web-based builder such as WordPress?","text","software installed versus web-based"],
+["WYSIWYG software and web-based builders can use templates. True or False?","mc","True",["True","False"]],
+["HTML generated by WYSIWYG software cannot be edited. True or False?","mc","False",["True","False"]]
+]},
+{sec:"UNIT 6 - WEB AUTHORING",lesson:"Lesson 6 - Multimedia Web Content",qs:[
+["What is meant by multimedia content on a website?","text","audio,video or other media content"],
+["Give three examples of multimedia content.","text","audio,video,image"],
+["What type of multimedia could be appropriate for a social-network website?","text","video,image,audio"],
+["What type of multimedia could be appropriate for an international news website?","text","video,image,audio"],
+["What type of multimedia could be appropriate for a microblogging website?","text","image,video,audio"],
+["What is meant by embedded content?","text","content added to or displayed within another webpage"],
+["Give three examples of content that could be added using an embed tool/script.","text","video,map,social media post"],
+["What HTML element is commonly used to embed content into a webpage?","mc","iframe",["iframe","cpu","ram","bios"]],
+["Does copyright still apply to embedded content?","mc","Yes",["Yes","No"]],
+["Can embedded content remain dependent on the original external source?","mc","Yes",["Yes","No"]],
+["Only choose content that enhances the webpage. Good or Bad?","mc","Good",["Good","Bad"]],
+["Use content appropriate for the target audience. Good or Bad?","mc","Good",["Good","Bad"]],
+["Add multiple embedded items to a single page. Good or Bad?","mc","Bad",["Good","Bad"]],
+["Make sure you have permission to use content. Good or Bad?","mc","Good",["Good","Bad"]],
+["Link to content without checking it yourself first. Good or Bad?","mc","Bad",["Good","Bad"]],
+["Fill a webpage with as much content as possible. Good or Bad?","mc","Bad",["Good","Bad"]]
+]}
+];
+</script>
+
+<!-- ============ SCRIPT 3: MAIN LOGIC ============ -->
+<script>
+var form, n = 0, submitted = false, examActive = false;
+var violations = 0, timeLeft = 0, timerInt = null, blurGuard = false, audioCtx = null;
+
+function initAudio(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+  }catch(e){}
+}
+function playAlarm(){
+  try{
+    initAudio(); if(!audioCtx) return;
+    var ctx = audioCtx, now = ctx.currentTime, i;
+    for(i=0; i<3; i++){
+      var t0 = now + i*1.1;
+      var osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(500, t0);
+      osc.frequency.linearRampToValueAtTime(1400, t0+0.45);
+      osc.frequency.linearRampToValueAtTime(500, t0+0.9);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(1.0, t0+0.05);
+      gain.gain.setValueAtTime(1.0, t0+0.85);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0+1.0);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(t0); osc.stop(t0+1.05);
+    }
+  }catch(e){}
+}
+function enterFullscreen(){
+  var el = document.documentElement;
+  try{
+    if(el.requestFullscreen){ var p = el.requestFullscreen({navigationUI:'hide'}); if(p && p.catch) p.catch(function(){}); }
+    else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if(el.msRequestFullscreen) el.msRequestFullscreen();
+  }catch(e){}
+}
+function isFullscreen(){
+  return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+}
+function startExam(){
+  examActive = true; submitted = false;
+  timeLeft = window.EXAM_MINUTES * 60;
+  updateTimerDisplay();
+  clearInterval(timerInt);
+  timerInt = setInterval(function(){
+    if(!examActive) return;
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft <= 0){
+      clearInterval(timerInt);
+      alert('Time is up! Your exam will be submitted automatically.');
+      submitExam(true);
+    }
+  }, 1000);
+}
+function updateTimerDisplay(){
+  var t = document.getElementById('timer'), box = document.getElementById('timerBox');
+  if(!t || !box) return;
+  var m = Math.floor(timeLeft/60), s = timeLeft % 60;
+  t.textContent = (m<10?'0':'')+m + ':' + (s<10?'0':'')+s;
+  if(timeLeft <= 300) box.classList.add('warn'); else box.classList.remove('warn');
+}
+function showWarning(msg){
+  if(!examActive || submitted) return;
+  violations++;
+  var vc = document.getElementById('violChip');
+  if(vc) vc.textContent = '\u26A0 Violations: ' + violations;
+  playAlarm();
+  var ov = document.getElementById('warnOverlay');
+  var wm = document.getElementById('warnMsg');
+  var wc = document.getElementById('warnCount');
+  if(wm) wm.textContent = msg;
+  if(wc) wc.textContent = 'Warnings: ' + violations + ' / ' + window.MAX_VIOLATIONS + (violations >= window.MAX_VIOLATIONS ? ' - Exam will close.' : '');
+  if(ov) ov.style.display = 'flex';
+  if(violations >= window.MAX_VIOLATIONS){
+    setTimeout(function(){ if(ov) ov.style.display='none'; submitExam(true, true); }, 2500);
+  }
+}
+['fullscreenchange','webkitfullscreenchange','msfullscreenchange'].forEach(function(ev){
+  document.addEventListener(ev, function(){
+    if(!examActive || submitted) return;
+    if(!isFullscreen()){
+      blurGuard = true;
+      showWarning('\u26D4 You left full screen. Please stay in full screen during the exam.');
+      setTimeout(function(){ blurGuard = false; }, 1200);
+    }
+  });
+});
+document.addEventListener('visibilitychange', function(){
+  if(!examActive || submitted) return;
+  if(document.hidden) showWarning('\u26D4 You switched to another tab or window.');
+});
+window.addEventListener('blur', function(){
+  if(!examActive || submitted || blurGuard) return;
+  setTimeout(function(){
+    if(!document.hasFocus() && examActive && !submitted) showWarning('\u26D4 You left the exam window.');
+  }, 200);
+});
+window.addEventListener('beforeunload', function(e){
+  if(examActive && !submitted){ e.preventDefault(); e.returnValue=''; return ''; }
+});
+['copy','cut','paste','contextmenu','dragstart','selectstart'].forEach(function(ev){
+  document.addEventListener(ev, function(e){
+    if(examActive && !submitted){ e.preventDefault(); return false; }
+  });
+});
+document.addEventListener('keydown', function(e){
+  if(!examActive || submitted) return;
+  var k = (e.key || '').toLowerCase();
+  if((e.ctrlKey || e.metaKey) && ['c','v','x','a','u','s','p'].indexOf(k) !== -1){
+    e.preventDefault(); showWarning('\u26D4 Copy / Paste / Save is not allowed.'); return false;
+  }
+  if(k === 'f12' || (e.ctrlKey && e.shiftKey && ['i','j','c'].indexOf(k) !== -1)){
+    e.preventDefault(); showWarning('\u26D4 Developer tools are not allowed.'); return false;
+  }
+  if(k === 'printscreen'){ e.preventDefault(); showWarning('\u26D4 Screenshots are not allowed.'); return false; }
+  if(k === 'escape'){ e.preventDefault(); showWarning('\u26D4 Pressing ESC is not allowed.'); return false; }
+}, true);
+
+function norm(s){
+  return String(s||'').toLowerCase().replace(/<[^>]*>/g,' ')
+    .replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+}
+function escapeHTML(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escapeAttr(s){ return escapeHTML(s); }
+
+function render(){
+  form = document.getElementById('examForm');
+  if(!form){ showErr('examForm not found'); return; }
+  if(typeof questions === 'undefined'){ showErr('questions data missing'); return; }
+
+  questions.forEach(function(block){
+    var sec = document.createElement('section');
+    sec.className = 'section';
+    sec.innerHTML = '<div class="section-title">' + escapeHTML(block.sec) + '</div><div class="lesson"><h3>' + escapeHTML(block.lesson) + '</h3></div>';
+    var lesson = sec.querySelector('.lesson');
+
+    block.qs.forEach(function(q){
+      n++;
+      var id = 'q' + n;
+      var d = document.createElement('div');
+      d.className = 'q';
+      var input = '';
+      if(q[1] === 'mc'){
+        var opts = q[3].map(function(o, i){
+          return '<label><input type="radio" name="' + id + '" value="' + escapeAttr(o) + '"> ' + String.fromCharCode(65+i) + '. ' + escapeHTML(o) + '</label>';
+        }).join('');
+        input = '<div class="opts">' + opts + '</div>';
+      } else {
+        input = '<textarea name="' + id + '" placeholder="Type your answer here..."></textarea>';
+      }
+      d.innerHTML = '<div class="qnum">Question ' + n + ' <span class="small">[1 mark]</span></div>' +
+                    '<div class="prompt">' + escapeHTML(q[0]) + '</div>' + input +
+                    '<div class="feedback" id="' + id + 'f"></div>';
+      lesson.appendChild(d);
+      d.dataset.answer = q[2];
+      d.dataset.type   = q[1];
+      d.dataset.qid    = id;
+      d.dataset.num    = n;
+      d.dataset.sec    = block.sec;
+      d.dataset.lesson = block.lesson;
+      d.dataset.prompt = q[0];
+    });
+    form.appendChild(sec);
+  });
+
+  var mt = document.getElementById('mTotal');
+  if(mt) mt.textContent = n;
+  form.addEventListener('input', updateProgress);
+}
+
+function getUserRaw(q){
+  var el = q.querySelector('[name="' + q.dataset.qid + '"]');
+  if(q.dataset.type === 'mc') return el && el.checked ? el.value : '';
+  return el ? el.value.trim() : '';
+}
+function check(q){
+  var user = norm(getUserRaw(q));
+  var ans  = norm(q.dataset.answer);
+  if(!user) return {ok:false, partial:false};
+  if(q.dataset.type === 'mc') return {ok: user === ans, partial:false};
+  var keys = ans.split(',').map(function(x){ return x.trim(); }).filter(Boolean);
+  if(keys.length === 1) return {ok: user.indexOf(keys[0]) !== -1 || keys[0].indexOf(user) !== -1, partial:false};
+  var hits = keys.filter(function(k){ return user.indexOf(k) !== -1; }).length;
+  var need = Math.min(2, keys.length);
+  return {ok: hits >= need, partial: hits > 0 && hits < need};
+}
+
+function submitExam(auto, kicked){
+  if(submitted) return;
+  submitted = true; examActive = false;
+  clearInterval(timerInt);
+  var ov = document.getElementById('warnOverlay'); if(ov) ov.style.display='none';
+
+  var total = 0, correct = 0, answered = 0, wrongList = [];
+  var groups = {}; // {sec: {lesson: [records]}}
+  var secTotals = {}, secCorrect = {};
+
+  document.querySelectorAll('.q').forEach(function(q){
+    total++;
+    var userRaw = getUserRaw(q);
+    var userN = norm(userRaw);
+    var ansN  = norm(q.dataset.answer);
+    var res   = check(q);
+    if(userRaw.trim()) answered++;
+
+    var status = res.ok ? 'ok' : (res.partial ? 'partial' : 'wrong');
+    if(res.ok){ correct++; }
+    else { wrongList.push(q.dataset.num); }
+
+    var sec = q.dataset.sec, lesson = q.dataset.lesson;
+    if(!groups[sec]){ groups[sec] = {}; secTotals[sec]=0; secCorrect[sec]=0; }
+    if(!groups[sec][lesson]) groups[sec][lesson] = [];
+    groups[sec][lesson].push({
+      num: q.dataset.num,
+      prompt: q.dataset.prompt,
+      type: q.dataset.type,
+      yourAnswer: userRaw || '(blank)',
+      correctAnswer: q.dataset.answer,
+      status: status
+    });
+    secTotals[sec]++;
+    if(res.ok) secCorrect[sec]++;
+
+    // Inline feedback under each question
+    var f = q.querySelector('.feedback');
+    f.style.display = 'block';
+    if(res.ok){
+      f.className = 'feedback correct';
+      f.innerHTML = '\u2713 <b>Correct</b> - 1 / 1 mark';
+    } else if(res.partial){
+      f.className = 'feedback partial';
+      f.innerHTML = '\u25D0 <b>Partly correct</b> - 0 / 1 mark<br><span class="small">Answer: ' + escapeHTML(q.dataset.answer) + '</span>';
+    } else {
+      f.className = 'feedback wrong';
+      f.innerHTML = '\u2717 <b>Incorrect</b> - 0 / 1 mark<br><span class="small">Answer: ' + escapeHTML(q.dataset.answer) + '</span>';
+    }
+    q.querySelectorAll('input, textarea').forEach(function(el){ el.disabled = true; });
+  });
+
+  var pct = Math.round(correct / total * 100);
+  var grade = 'F';
+  if(pct >= 80) grade = 'A';
+  else if(pct >= 70) grade = 'B';
+  else if(pct >= 60) grade = 'C';
+  else if(pct >= 50) grade = 'D';
+
+  var used = window.EXAM_MINUTES*60 - timeLeft;
+  var um = Math.floor(used/60), us = used%60;
+
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('score').textContent = correct + ' / ' + total + '  (' + pct + '%)';
+  document.getElementById('grade').textContent = 'Grade ' + grade;
+
+  // Summary grid
+  document.getElementById('summaryGrid').innerHTML =
+    '<div class="sumCell"><div class="k">Student</div><div class="v" style="font-size:14px;font-family:inherit">' + escapeHTML(window.studentName||'') + '</div></div>' +
+    '<div class="sumCell"><div class="k">Time used</div><div class="v">' + um + 'm ' + us + 's</div></div>' +
+    '<div class="sumCell"><div class="k">Answered</div><div class="v">' + answered + ' / ' + total + '</div></div>' +
+    '<div class="sumCell"><div class="k">Correct</div><div class="v" style="color:#4ade80">' + correct + '</div></div>' +
+    '<div class="sumCell"><div class="k">Wrong / blank</div><div class="v" style="color:#ff6b5b">' + (total-correct) + '</div></div>' +
+    '<div class="sumCell"><div class="k">Warnings</div><div class="v" style="color:#ff6b5b">' + violations + '</div></div>';
+
+  var msg = '';
+  if(kicked) msg += '<b style="color:#ff6b5b">Warning limit exceeded - exam closed automatically.</b><br>';
+  if(auto && !kicked) msg += '<b style="color:#ffb347">Time up - auto submitted.</b><br>';
+  if(wrongList.length) msg += 'Wrong / partial questions: <b style="color:#ff6b5b">' + wrongList.join(', ') + '</b><br>';
+  else msg += '<b style="color:#4ade80">Perfect! All answers correct.</b><br>';
+  msg += (pct>=80 ? 'Excellent work! Review the wrong answers below.'
+        : pct>=60 ? 'Good attempt. Review the wrong answers below.'
+        : 'Keep practising. Review the lesson topics below.');
+  document.getElementById('msgBox').innerHTML = msg;
+
+  // Unit-by-unit breakdown
+  var html = '';
+  Object.keys(groups).forEach(function(sec){
+    var sTot = secTotals[sec], sCor = secCorrect[sec];
+    var sPct = Math.round(sCor/sTot*100);
+    html += '<div class="unitBlock">' +
+              '<h3>' + escapeHTML(sec) + '</h3>' +
+              '<div class="unitStats">Correct: <b style="color:#4ade80">' + sCor + '</b> / ' + sTot + ' (' + sPct + '%)</div>';
+    Object.keys(groups[sec]).forEach(function(lesson){
+      var recs = groups[sec][lesson];
+      var lCor = recs.filter(function(r){ return r.status==='ok'; }).length;
+      html += '<div class="lessonBlock">' +
+                '<h4>' + escapeHTML(lesson) + '</h4>' +
+                '<div class="lessonStats">Correct: <b style="color:#4ade80">' + lCor + '</b> / ' + recs.length + '</div>' +
+                '<div class="tableWrap"><table class="resTable">' +
+                  '<thead><tr><th>Q#</th><th>Question</th><th>Your answer</th><th>Correct answer</th><th>Status</th></tr></thead><tbody>';
+      recs.forEach(function(r){
+        var rowCls = r.status==='ok' ? '' : (r.status==='partial' ? 'rowPart' : 'rowNo');
+        var stat = r.status==='ok'
+          ? '<span class="statusOk">\u2713 Correct</span>'
+          : r.status==='partial'
+            ? '<span class="statusPart">\u25D0 Partial</span>'
+            : '<span class="statusNo">\u2717 Wrong</span>';
+        html += '<tr class="' + rowCls + '">' +
+                  '<td><b>Q' + r.num + '</b></td>' +
+                  '<td class="qText">' + escapeHTML(r.prompt) + '</td>' +
+                  '<td class="uAns">' + escapeHTML(r.yourAnswer) + '</td>' +
+                  '<td class="cAns">' + escapeHTML(r.correctAnswer) + '</td>' +
+                  '<td>' + stat + '</td>' +
+                '</tr>';
+      });
+      html += '</tbody></table></div></div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('unitBreakdown').innerHTML = html;
+
+  document.getElementById('submitBtn').disabled = true;
+  var sb2 = document.getElementById('submitBtn2');
+  if(sb2) sb2.disabled = true;
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function resetExam(){
+  if(!confirm('Reset the whole exam?')) return;
+  form.reset();
+  document.querySelectorAll('.feedback').forEach(function(f){ f.style.display='none'; f.className='feedback'; });
+  document.querySelectorAll('.q input, .q textarea').forEach(function(el){ el.disabled = false; });
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('submitBtn').disabled = false;
+  var sb2 = document.getElementById('submitBtn2'); if(sb2) sb2.disabled = false;
+  violations = 0;
+  document.getElementById('violChip').textContent = '\u26A0 Violations: 0';
+  submitted = false; examActive = true;
+  startExam();
+  enterFullscreen();
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateProgress(){
+  var all = document.querySelectorAll('.q');
+  if(!all.length) return;
+  var answered = 0;
+  Array.prototype.forEach.call(all, function(q){ if(getUserRaw(q).trim()) answered++; });
+  var bar = document.getElementById('bar');
+  var ma = document.getElementById('mAnswered');
+  if(bar) bar.style.width = (answered/all.length*100) + '%';
+  if(ma) ma.textContent = answered;
+}
+
+try{ render(); updateProgress(); }
+catch(e){ showErr('Boot error: ' + e.message); }
+</script>
+</body>
+</html>
